@@ -1,15 +1,28 @@
 <template>
   <div class="container">
     <header>
-      <h1 class="title">
+      <h1 class="sr-only title">
         boombox
       </h1>
     </header>
+    <main>
+      <Player v-bind:songs="songs"/>
+    </main>
   </div>
 </template>
 
 <script>
-export default {}
+export default {
+  data: () => {
+    return {
+      songs: [
+        '/audio/zante/1.webm',
+        '/audio/zante/2.webm',
+        '/audio/zante/3.webm'
+      ]
+    }
+  }
+}
 </script>
 
 <style>

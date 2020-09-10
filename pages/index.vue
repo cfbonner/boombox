@@ -16,9 +16,21 @@ export default {
   data: () => {
     return {
       songs: [
-        '/audio/zante/1.webm',
-        '/audio/zante/2.webm',
-        '/audio/zante/3.webm'
+        {
+          src: '/audio/zante/1.webm',
+          title: 'Can I Eat',
+          author: 'Cutty\'s Gym'
+        },
+        {
+          src: '/audio/zante/2.webm',
+          title: 'Dance Stance',
+          author: 'Cutty\'s Gym'
+        },
+        {
+          src: '/audio/zante/2.webm',
+          title: 'Batboy',
+          author: 'Cutty\'s Gym'
+        },
       ]
     }
   }

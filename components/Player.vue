@@ -1,11 +1,10 @@
 <template>
   <div id="player"
-       class="boombox-player border border-black rounded p-6 shadow-lg"
-       data-url="https://bandcamp.com">
+       class="boombox-player border border-black w-64 rounded p-6 shadow-lg">
     <div class="boombox space-y-6">
       <div class="boombox-section space-y-4">
-        <div class="text-xs"><span>00:00</span> / <span>03:30</span></div>
-        <div class="test-lg"><span>Track title</span> - <span>Artists name lorem</span></div>
+        <div class="text-xs"><span>00:00</span> / <span>{{ duration }}</span></div>
+        <div class="text-base"><span>{{ title }}</span> - <span>{{ author }}</span></div>
       </div>
       <div class="boombox-section">
         <div class="boombox-controls border-2 divide-x divide-black">
@@ -59,6 +58,9 @@ module.exports = {
     return {
       index: 0,
       playing: false,
+      duration: 0,
+      title: null,
+      author: null
     }
   },
   created: function() {
@@ -66,9 +68,11 @@ module.exports = {
   },
   methods: {
     initialize() {
-      sound = new Howl({
-        src: [this.songs[this.index]]
-      })
+      const track = this.songs[this.index]
+      sound = new Howl({ src: [track.src] })
+      this.title = track.title
+      this.author = track.author
+      this.duration = sound.duration()
     },
     play() {
       sound.play()
@@ -80,31 +84,11 @@ module.exports = {
     },
     previous() {
       this.index--
-      if (this.playing) {
-        sound.stop()
-        sound = new Howl({
-          src: [this.songs[this.index]]
-        })
-        sound.play()
-      } else {
-        sound = new Howl({
-          src: [this.songs[this.index]]
-        })
-      }
+      this.initialize()
     },
     next() {
       this.index++
-      if (this.playing) {
-        sound.stop()
-        sound = new Howl({
-          src: [this.songs[this.index]]
-        })
-        sound.play()
-      } else {
-        sound = new Howl({
-          src: [this.songs[this.index]]
-        })
-      }
+      this.initialize()
     }
   }
 }

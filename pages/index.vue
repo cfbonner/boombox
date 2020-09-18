@@ -27,7 +27,7 @@ export default {
           author: 'Cutty\'s Gym'
         },
         {
-          src: '/audio/zante/2.webm',
+          src: '/audio/zante/3.webm',
           title: 'Batboy',
           author: 'Cutty\'s Gym'
         },

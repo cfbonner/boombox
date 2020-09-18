@@ -2,9 +2,9 @@
   <div id="player"
        class="boombox-player border border-black w-64 rounded p-6 shadow-lg">
     <div class="boombox space-y-6">
-      <div class="boombox-section space-y-4">
-        <div class="text-xs"><span>00:00</span> / <span>{{ duration }}</span></div>
-        <div class="text-base"><span>{{ title }}</span> - <span>{{ author }}</span></div>
+      <div class="boombox-section space-y-1">
+        <div class="text-xs font-bold"><span>{{ current_time || '00:00' }}</span> / <span>{{ duration || '00:00' }}</span></div>
+        <div class="text-sm"><span>{{ title }}</span> - <span>{{ author }}</span></div>
       </div>
       <div class="boombox-section">
         <div class="boombox-controls border-2 divide-x divide-black">
@@ -59,6 +59,8 @@ module.exports = {
       index: 0,
       playing: false,
       duration: 0,
+      sounds: [],
+      current_time: null,
       title: null,
       author: null
     }
@@ -66,29 +68,54 @@ module.exports = {
   created: function() {
     this.initialize()
   },
+  watch: {
+    index: function (index, last_index) {
+      if (this.sounds[last_index].playing()) {
+        this.sounds[last_index].stop()
+        this.initialize()
+        this.sounds[index].play()
+      } else {
+        this.initialize()
+      }
+    },
+    playing: function(playing) {
+      if (this.sounds[this.index] && playing) {
+        this.sounds[this.index].play()
+        setInterval(() => {
+          this.current_time = Math.round(this.sounds[this.index].seek())
+        }, 1000)
+      } else if (this.sounds[this.index] && !playing) {
+        this.sounds[this.index].pause()
+      }
+    }
+  },
   methods: {
     initialize() {
       const track = this.songs[this.index]
-      sound = new Howl({ src: [track.src] })
       this.title = track.title
       this.author = track.author
-      this.duration = sound.duration()
+      this.duration = null
+      this.current_time = null
+      this.sounds[this.index] = new Howl({
+        src: [track.src],
+        onload: () => {
+          this.duration = this.sounds[this.index].duration()
+        }
+      })
     },
     play() {
-      sound.play()
       this.playing = !this.playing
     },
     pause() {
-      sound.pause()
       this.playing = !this.playing
     },
     previous() {
-      this.index--
-      this.initialize()
+      const current = this.index
+      this.index = (current + this.songs.length - 1) % (this.songs.length)
     },
     next() {
-      this.index++
-      this.initialize()
+      const current = this.index
+      this.index = (current + 1) % (this.songs.length)
     }
   }
 }

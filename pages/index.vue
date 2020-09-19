@@ -1,7 +1,7 @@
 <template>
-  <div class="container">
+  <div>
     <header>
-      <h1 class="sr-only title">
+      <h1 class="sr-only">
         boombox
       </h1>
     </header>
@@ -38,11 +38,6 @@ export default {
 </script>
 
 <style>
-/* Sample `apply` at-rules with Tailwind CSS
-.container {
-@apply min-h-screen flex justify-center items-center text-center mx-auto;
-}
-*/
 .container {
   margin: 0 auto;
   min-height: 100vh;

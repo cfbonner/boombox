@@ -1,6 +1,6 @@
 <template>
   <div id="player"
-       class="boombox-player border border-black w-64 rounded p-6 shadow-lg">
+       class="boombox-player">
     <div class="boombox space-y-6">
       <div class="boombox-section space-y-1">
         <div class="text-xs font-bold"><span>{{ current_time || '00:00' }}</span> / <span>{{ duration || '00:00' }}</span></div>
@@ -127,15 +127,14 @@ module.exports = {
  }
 
 .boombox-section {
-  @apply flex flex-col items-start w-full
+  @apply flex flex-col items-start w-full;
+  @screen sm {
+    @apply w-2/3 m-auto;
+  }
 }
 
 .boombox-player {
-  @apply text-black border border-gray-900 p-6
-}
-
-.boombox-player {
-  box-shadow: 1px 1px 0 1px black;
+  @apply text-black p-4 fixed bottom-0 w-full border-t border-black
 }
 
 .boombox-controls {
@@ -155,7 +154,7 @@ module.exports = {
 }
 
 .control img {
-  @apply w-4 h-4
+  @apply w-5 h-5
 }
 
 .control:hover {

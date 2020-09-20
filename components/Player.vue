@@ -1,44 +1,59 @@
 <template>
-  <div id="player"
-       class="boombox-player">
-    <div class="boombox space-y-6">
-      <div class="boombox-section space-y-1">
-        <div class="text-xs font-bold"><span>{{ current_time || '00:00' }}</span> / <span>{{ duration || '00:00' }}</span></div>
-        <div class="text-sm"><span>{{ title }}</span> - <span>{{ author }}</span></div>
-      </div>
-      <div class="boombox-section">
-        <div class="boombox-controls border-2 divide-x divide-black">
-          <div class="boombox-control">
-            <button id="previous"
-              class="control"
-              v-on:click="previous">
-              <span class="sr-only">previous</span>
-              <img src="~/assets/images/rewind.svg" />
-            </button>
-          </div>
-          <div class="boombox-control"
-               v-bind:class="{'hidden':playing}">
-            <button v-on:click="play"
-                    class="control">
-              <span class="sr-only">play</span>
-              <img src="~/assets/images/play.svg" />
-            </button>
-          </div>
-          <div class="boombox-control"
-               v-bind:class="{'hidden':!playing}">
-            <button v-on:click="pause"
-                    class="control">
-              <span class="sr-only">pause</span>
-              <img src="~/assets/images/pause.svg" />
-            </button>
-          </div>
-          <div class="boombox-control">
-            <button v-on:click="next"
-                    id="next"
-                    class="control">
-              <span class="sr-only">next</span>
-              <img src="~/assets/images/fast-forward.svg" />
-            </button>
+  <div>
+    <ul class="flex flex-col text-xs list-disc border-b border-black divide-y divide-black">
+      <li v-for="(song, i) in songs" class="flex w-full h-full">
+        <button v-on:click.prevent="playing = true; index = i"
+           href="#"
+           class="flex items-center w-full px-4 py-4 hover:bg-yellow-500"
+           v-bind:class="{'bg-yellow-500':index == i && playing}"
+           >
+           <img class="w-4 h-full mr-4" src="~/assets/images/play.svg" v-if="(index == i && !playing) || (index != i)" />
+           <img class="w-4 h-full mr-4" src="~/assets/images/pause.svg" v-if="index == i && playing" />
+           <span class="h-full">{{ song.title }}</span>
+        </button>
+      </li>
+    </ul>
+    <div id="player"
+         class="boombox-player">
+      <div class="boombox space-y-4">
+        <div class="boombox-section space-y-1">
+          <div class="text-xs font-bold"><span>{{ current_time || '00:00' }}</span> / <span>{{ duration || '00:00' }}</span></div>
+          <div class="text-sm"><span>{{ title }}</span> - <span>{{ author }}</span></div>
+        </div>
+        <div class="boombox-section">
+          <div class="boombox-controls border-2 divide-x divide-black">
+            <div class="boombox-control">
+              <button id="previous"
+                class="control"
+                v-on:click="previous">
+                <span class="sr-only">previous</span>
+                <img src="~/assets/images/rewind.svg" />
+              </button>
+            </div>
+            <div class="boombox-control"
+                 v-bind:class="{'hidden':playing}">
+              <button v-on:click="play"
+                      class="control">
+                <span class="sr-only">play</span>
+                <img src="~/assets/images/play.svg" />
+              </button>
+            </div>
+            <div class="boombox-control"
+                 v-bind:class="{'hidden':!playing}">
+              <button v-on:click="pause"
+                      class="control">
+                <span class="sr-only">pause</span>
+                <img src="~/assets/images/pause.svg" />
+              </button>
+            </div>
+            <div class="boombox-control">
+              <button v-on:click="next"
+                      id="next"
+                      class="control">
+                <span class="sr-only">next</span>
+                <img src="~/assets/images/fast-forward.svg" />
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -138,18 +153,22 @@ module.exports = {
 }
 
 .boombox-controls {
-  @apply flex items-center border border-black flex-grow w-full rounded
+  @apply flex items-center border border-black flex-grow w-full
 }
 
 .boombox-control {
-  @apply relative flex-grow h-8
+  @apply relative flex-grow h-10
 }
 
 .control {
-  @apply absolute inset-0 bg-white flex items-center justify-center w-full rounded
+  @apply flex items-center justify-center w-full h-full
 }
 
 .control.hidden {
+  @apply invisible
+}
+
+img.hidden {
   @apply invisible
 }
 
@@ -158,10 +177,10 @@ module.exports = {
 }
 
 .control:hover {
-  @apply bg-gray-200
+  @apply bg-yellow-500
 }
 
 .control:active {
-  @apply bg-gray-400
+  @apply bg-red-500
 }
 </style>

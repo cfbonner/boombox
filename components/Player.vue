@@ -1,8 +1,8 @@
 <template>
-  <div>
-    <ul class="flex flex-col text-xs list-disc border-b border-black divide-y divide-black">
+  <div class="flex h-screen overflow-hidden max-h-screen flex-col">
+    <ul class="flex flex-col text-xs h-full overflow-y-scroll list-disc border-b border-black divide-y divide-black">
       <li v-for="(song, i) in songs" class="flex w-full h-full">
-        <button v-on:click.prevent="playing = true; index = i"
+        <button v-on:click.prevent="playAtIndex(i)"
            href="#"
            class="flex items-center w-full px-4 py-4 hover:bg-yellow-500"
            v-bind:class="{'bg-yellow-500':index == i && playing}"
@@ -131,6 +131,13 @@ module.exports = {
     next() {
       const current = this.index
       this.index = (current + 1) % (this.songs.length)
+    },
+    playAtIndex(index) {
+      if (this.index == index) { return }
+      this.index = index
+      if (!this.playing) {
+        this.playing = !this.playing
+      }
     }
   }
 }
@@ -149,7 +156,7 @@ module.exports = {
 }
 
 .boombox-player {
-  @apply text-black p-4 fixed bottom-0 w-full border-t border-black
+  @apply text-black p-4 w-full border-t border-black
 }
 
 .boombox-controls {

@@ -1,6 +1,10 @@
 <template>
   <div class="flex h-screen overflow-hidden max-h-screen flex-col">
     <div class="h-full overflow-y-scroll">
+      <player-collection v-if="!playlist_selected"
+                         v-bind:collection="collection"
+                         @selectPlaylist="selectPlaylist"
+                         />
       <player-playlist v-if="playlist_selected"
                        v-bind:current_time="current_time"
                        v-bind:songs="songs"
@@ -32,24 +36,34 @@ let sound
 
 module.exports = {
   props: {
-    songs: Array
+    collection: Array
   },
   data: function() {
     return {
       index: 0,
+      collection_index: 0,
       playing: false,
       sounds: [],
       duration: 0,
       current_time: 0,
       title: null,
       artist: null,
-      playlist_selected: true
+      playlist_selected: false,
+    }
+  },
+  computed: {
+    songs: function() {
+      return this.collection[this.collection_index].songs
     }
   },
   created: function() {
     this.initialize()
   },
   watch: {
+    collection_index: function(index, last_index) {
+      this.sounds = this.collection[index]
+      this.playlist_selected = true
+    },
     index: function (index, last_index) {
       if (this.sounds[last_index].playing() || this.playing) {
         this.sounds[last_index].stop()
@@ -107,7 +121,15 @@ module.exports = {
       if (!this.playing) {
         this.playing = !this.playing
       }
-    }
+    },
+    selectPlaylist(index) {
+      if (this.collection_index != index) {
+        this.collection_index = index
+      }
+      if (!this.playlist_selected) {
+        this.playlist_selected = !this.playlist_selected
+      }
+    },
   }
 }
 </script>

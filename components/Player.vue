@@ -15,16 +15,17 @@
     </ul>
     <div class="boombox-player">
       <div class="boombox space-y-4">
-        <div class="boombox-section space-y-1">
-          <div class="text-xs font-bold"><span>{{ current_time || '00:00' }}</span> / <span>{{ duration || '00:00' }}</span></div>
-          <div class="text-sm"><span>{{ title }}</span> - <span>{{ author }}</span></div>
-        </div>
+        <player-details  v-bind:current_time="current_time"
+                         v-bind:current_duration="duration"
+                         v-bind:current_title="title"
+                         v-bind:current_artist="artist"
+         />
         <player-controls v-bind:playing="playing"
                          @next="next"
                          @play="play"
                          @pause="pause"
                          @previous="previous"
-          />
+         />
       </div>
     </div>
   </div>
@@ -42,11 +43,11 @@ module.exports = {
     return {
       index: 0,
       playing: false,
-      duration: 0,
       sounds: [],
-      current_time: null,
+      duration: 0,
+      current_time: 0,
       title: null,
-      author: null
+      artist: null
     }
   },
   created: function() {
@@ -66,7 +67,7 @@ module.exports = {
       if (this.sounds[this.index] && playing) {
         this.sounds[this.index].play()
         setInterval(() => {
-          this.current_time = Math.round(this.sounds[this.index].seek())
+          this.current_time = !Number.isNaN(this.sounds[this.index].seek()) ? this.sounds[this.index].seek() : 0
         }, 1000)
       } else if (this.sounds[this.index] && !playing) {
         this.sounds[this.index].pause()
@@ -77,9 +78,8 @@ module.exports = {
     initialize() {
       const track = this.songs[this.index]
       this.title = track.title
-      this.author = track.author
+      this.artist = track.author
       this.duration = null
-      this.current_time = null
       this.sounds[this.index] = new Howl({
         src: [track.src],
         onload: () => {

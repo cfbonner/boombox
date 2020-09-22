@@ -60,7 +60,31 @@ export default {
 </script>
 
 <style scoped>
+.boombox-controls {
+  @apply flex items-center border border-black flex-grow w-full
+}
+
+.boombox-control {
+  @apply relative flex-grow h-10
+}
+
+.control {
+  @apply flex items-center justify-center w-full h-full
+}
+
 .control.hidden {
   @apply invisible
+}
+
+.control img {
+  @apply w-5 h-5
+}
+
+.control:hover {
+  @apply bg-yellow-500
+}
+
+.control:active {
+  @apply bg-red-500
 }
 </style>

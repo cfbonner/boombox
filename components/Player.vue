@@ -1,31 +1,26 @@
 <template>
   <div class="flex h-screen overflow-hidden max-h-screen flex-col">
-    <ul class="flex flex-col text-xs h-full overflow-y-scroll list-disc border-b border-black divide-y divide-black">
-      <li v-for="(song, i) in songs" class="flex w-full h-full">
-        <button v-on:click.prevent="playAtIndex(i)"
-           href="#"
-           class="flex items-center w-full px-4 py-4 hover:bg-yellow-500"
-           v-bind:class="{'bg-yellow-500':index == i && playing}"
-           >
-           <img class="w-4 h-full mr-4" src="~/assets/images/play.svg" v-if="(index == i && !playing) || (index != i)" />
-           <img class="w-4 h-full mr-4" src="~/assets/images/pause.svg" v-if="index == i && playing" />
-           <span class="h-full">{{ song.title }}</span>
-        </button>
-      </li>
-    </ul>
-    <div class="boombox-player">
+    <div class="h-full overflow-y-scroll">
+      <player-playlist v-if="playlist_selected"
+                       v-bind:current_time="current_time"
+                       v-bind:songs="songs"
+                       v-bind:index.sync="index"
+                       v-bind:playing.sync="playing"
+                       />
+    </div>
+    <div class="text-black p-4 w-full">
       <div class="boombox space-y-4">
         <player-details  v-bind:current_time="current_time"
                          v-bind:current_duration="duration"
                          v-bind:current_title="title"
                          v-bind:current_artist="artist"
-         />
+                         />
         <player-controls v-bind:playing="playing"
                          @next="next"
                          @play="play"
                          @pause="pause"
                          @previous="previous"
-         />
+                         />
       </div>
     </div>
   </div>
@@ -47,7 +42,8 @@ module.exports = {
       duration: 0,
       current_time: 0,
       title: null,
-      artist: null
+      artist: null,
+      playlist_selected: true
     }
   },
   created: function() {
@@ -104,7 +100,7 @@ module.exports = {
       const current = this.index
       this.index = (current + 1) % (this.songs.length)
     },
-    playAtIndex(index) {
+    setIndex(index) {
       if (this.index != index) {
         this.index = index
       }
@@ -117,50 +113,10 @@ module.exports = {
 </script>
 
 <style>
-.boombox {
-   @apply flex flex-col items-start
- }
-
 .boombox-section {
   @apply flex flex-col items-start w-full;
   @screen sm {
     @apply w-2/3 m-auto;
   }
-}
-
-.boombox-player {
-  @apply text-black p-4 w-full
-}
-
-.boombox-controls {
-  @apply flex items-center border border-black flex-grow w-full
-}
-
-.boombox-control {
-  @apply relative flex-grow h-10
-}
-
-.control {
-  @apply flex items-center justify-center w-full h-full
-}
-
-.control.hidden {
-  @apply invisible
-}
-
-img.hidden {
-  @apply invisible
-}
-
-.control img {
-  @apply w-5 h-5
-}
-
-.control:hover {
-  @apply bg-yellow-500
-}
-
-.control:active {
-  @apply bg-red-500
 }
 </style>

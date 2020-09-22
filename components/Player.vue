@@ -13,49 +13,18 @@
         </button>
       </li>
     </ul>
-    <div id="player"
-         class="boombox-player">
+    <div class="boombox-player">
       <div class="boombox space-y-4">
         <div class="boombox-section space-y-1">
           <div class="text-xs font-bold"><span>{{ current_time || '00:00' }}</span> / <span>{{ duration || '00:00' }}</span></div>
           <div class="text-sm"><span>{{ title }}</span> - <span>{{ author }}</span></div>
         </div>
-        <div class="boombox-section">
-          <div class="boombox-controls border-2 divide-x divide-black">
-            <div class="boombox-control">
-              <button id="previous"
-                class="control"
-                v-on:click="previous">
-                <span class="sr-only">previous</span>
-                <img src="~/assets/images/rewind.svg" />
-              </button>
-            </div>
-            <div class="boombox-control"
-                 v-bind:class="{'hidden':playing}">
-              <button v-on:click="play"
-                      class="control">
-                <span class="sr-only">play</span>
-                <img src="~/assets/images/play.svg" />
-              </button>
-            </div>
-            <div class="boombox-control"
-                 v-bind:class="{'hidden':!playing}">
-              <button v-on:click="pause"
-                      class="control">
-                <span class="sr-only">pause</span>
-                <img src="~/assets/images/pause.svg" />
-              </button>
-            </div>
-            <div class="boombox-control">
-              <button v-on:click="next"
-                      id="next"
-                      class="control">
-                <span class="sr-only">next</span>
-                <img src="~/assets/images/fast-forward.svg" />
-              </button>
-            </div>
-          </div>
-        </div>
+        <player-controls v-bind:playing="playing"
+                         @next="next"
+                         @play="play"
+                         @pause="pause"
+                         @previous="previous"
+          />
       </div>
     </div>
   </div>
@@ -85,7 +54,7 @@ module.exports = {
   },
   watch: {
     index: function (index, last_index) {
-      if (this.sounds[last_index].playing()) {
+      if (this.sounds[last_index].playing() || this.playing) {
         this.sounds[last_index].stop()
         this.initialize()
         this.sounds[index].play()
@@ -115,6 +84,9 @@ module.exports = {
         src: [track.src],
         onload: () => {
           this.duration = this.sounds[this.index].duration()
+        },
+        onend: () => {
+          this.next()
         }
       })
     },
@@ -133,8 +105,9 @@ module.exports = {
       this.index = (current + 1) % (this.songs.length)
     },
     playAtIndex(index) {
-      if (this.index == index) { return }
-      this.index = index
+      if (this.index != index) {
+        this.index = index
+      }
       if (!this.playing) {
         this.playing = !this.playing
       }
@@ -156,7 +129,7 @@ module.exports = {
 }
 
 .boombox-player {
-  @apply text-black p-4 w-full border-t border-black
+  @apply text-black p-4 w-full
 }
 
 .boombox-controls {

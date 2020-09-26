@@ -77,6 +77,7 @@ module.exports = {
       this.current_time = 0
       this.current_track.audio = new Howl({
         src: [this.current_track.src],
+        html5: true,
         onload: () => {
           this.duration = this.current_track.audio.duration()
         },
@@ -89,7 +90,6 @@ module.exports = {
       this.playing = !this.playing
     },
     pause() {
-      console.log('PAUSE?')
       this.playing = !this.playing
     },
     previous() {

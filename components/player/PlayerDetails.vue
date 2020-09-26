@@ -34,12 +34,7 @@ const prettyTime = (seconds) => {
 }
 
 module.exports = {
-  props: {
-    current_time: Number,
-    current_duration: Number,
-    current_title: String,
-    current_artist: String
-  },
+  props: ['current_time', 'current_duration',  'current_title', 'current_artist'],
   computed: {
     prettyCurrentTime: function() {
       return prettyTime(this.current_time)

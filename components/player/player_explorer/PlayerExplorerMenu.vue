@@ -2,7 +2,7 @@
   <nav>
     <ul class="menu divide-x  divide-black">
       <li class="menu-item" v-if="playlist_selected">
-        <a v-on:click.prevent="viewAll">
+        <a class="menu-item-link" v-on:click.prevent="viewAll">
           <img class="w-full h-full" src="~/assets/images/grid.svg" />
         </a>
       </li>
@@ -27,12 +27,13 @@ export default {
 .menu {
   @apply h-12 flex justify-end items-center border-t border-b border-black;
 }
-
 .menu-item:first-child {
   @apply border-l border-black;
 }
 .menu-item {
-  @apply flex items-center p-3;
+  @apply flex cursor-pointer flex items-center h-full;
 }
-
+.menu-item-link {
+  @apply p-3 w-full h-full;
+}
 </style>

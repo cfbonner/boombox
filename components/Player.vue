@@ -51,18 +51,12 @@ module.exports = {
     this.initialize()
   },
   watch: {
-    collection_index: function(index, last_index) {
+    collection_index: function(index) {
       this.current_playlist = this.collection[index]
+      this.changeTrack()
     },
     index: function (index) {
-      if (this.current_track.audio.playing() || this.playing) {
-        this.current_track.audio.stop()
-        this.initialize()
-        this.playing = true
-        this.current_track.audio.play()
-      } else {
-        this.initialize()
-      }
+      this.changeTrack()
     },
     playing: function(playing) {
       if (this.current_track.audio && playing) {
@@ -114,6 +108,16 @@ module.exports = {
         this.playing = !this.playing
       }
     },
+    changeTrack() {
+      if (this.current_track.audio.playing() || this.playing) {
+        this.current_track.audio.stop()
+        this.initialize()
+        this.playing = true
+        this.current_track.audio.play()
+      } else {
+        this.initialize()
+      }
+    }
   }
 }
 </script>

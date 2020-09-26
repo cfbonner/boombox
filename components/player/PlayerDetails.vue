@@ -10,9 +10,6 @@
 </script>
 
 <script>
-const {Howl, Howler} = require('howler')
-let sound
-
 const paddedNumber = number => {
   if (Number.isNaN(number)) { return '00' }
 

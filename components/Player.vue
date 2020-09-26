@@ -2,17 +2,19 @@
   <div class="flex h-screen overflow-hidden max-h-screen flex-col">
     <div class="h-full overflow-y-scroll">
       <player-explorer v-bind:collection="collection"
-                       v-bind:index="index"
+                       v-bind:current_track="current_track"
+                       v-bind:current_playlist="current_playlist"
                        v-bind:playing="playing"
-                       @selectTrack="selectTrack"
+                       @select="select"
+                       @pause="pause"
                        />
     </div>
-    <div class="text-black p-4 w-full">
-      <div class="boombox space-y-4">
+    <div class="boombox-lower text-black p-4 w-full">
+      <div class="space-y-4">
         <player-details  v-bind:current_time="current_time"
                          v-bind:current_duration="duration"
-                         v-bind:current_title="title"
-                         v-bind:current_artist="artist"
+                         v-bind:current_title="current_track.title"
+                         v-bind:current_artist="current_track.artist"
                          />
         <player-controls v-bind:playing="playing"
                          @next="next"
@@ -38,12 +40,9 @@ module.exports = {
       index: 0,
       collection_index: 0,
       playing: false,
-      sounds: [],
       duration: 0,
       current_time: 0,
-      title: null,
-      artist: null,
-      current_track: null,
+      current_track: {},
       current_playlist: null
     }
   },
@@ -53,26 +52,26 @@ module.exports = {
   },
   watch: {
     collection_index: function(index, last_index) {
-      this.collection[index]
+      this.current_playlist = this.collection[index]
     },
     index: function (index) {
-      if (this.current_track.playing() || this.playing) {
-        this.current_track.stop()
+      if (this.current_track.audio.playing() || this.playing) {
+        this.current_track.audio.stop()
         this.initialize()
         this.playing = true
-        this.current_track.play()
+        this.current_track.audio.play()
       } else {
         this.initialize()
       }
     },
     playing: function(playing) {
-      if (this.current_track && playing) {
-        this.current_track.play()
+      if (this.current_track.audio && playing) {
+        this.current_track.audio.play()
         setInterval(() => {
-          this.current_time = !Number.isNaN(this.current_track.seek()) ? this.current_track.seek() : 0
+          this.current_time = !Number.isNaN(this.current_track.audio.seek()) ? this.current_track.audio.seek() : 0
         }, 1000)
       } else if (this.current_playlist.songs[this.index] && !playing) {
-        this.current_track.pause()
+        this.current_track.audio.pause()
       }
     }
   },
@@ -80,14 +79,12 @@ module.exports = {
     initialize() {
       this.playing = false
       this.current_track = this.current_playlist.songs[this.index]
-      this.title = this.current_track.title
-      this.artist = this.current_track.author
       this.duration = 0
       this.current_time = 0
-      this.current_track = new Howl({
+      this.current_track.audio = new Howl({
         src: [this.current_track.src],
         onload: () => {
-          this.duration = this.current_track.duration()
+          this.duration = this.current_track.audio.duration()
         },
         onend: () => {
           this.next()
@@ -98,6 +95,7 @@ module.exports = {
       this.playing = !this.playing
     },
     pause() {
+      console.log('PAUSE?')
       this.playing = !this.playing
     },
     previous() {
@@ -108,7 +106,7 @@ module.exports = {
       const current = this.index
       this.index = (current + 1) % (this.current_playlist.songs.length)
     },
-    selectTrack(track, playlist) {
+    select(track, playlist) {
       this.collection_index = playlist
       this.index = track
 
@@ -127,4 +125,19 @@ module.exports = {
     @apply w-2/3 m-auto;
   }
 }
+
+.boombox-lower {
+  position: relative;
+}
+
+.boombox-lower::before {
+  position: absolute; z-index: -1;
+  top: -1px; right: 0; left: 0;
+  display: block;
+  width: 100vw;
+  height: 1px;
+  background-color: #000;
+  content: '';
+}
+
 </style>

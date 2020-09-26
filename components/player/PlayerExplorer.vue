@@ -1,25 +1,26 @@
 <template>
   <div>
-  <player-menu v-bind:playlist_selected="playlist_selected"
+  <player-explorer-menu v-bind:playlist_selected="playlist_selected"
                @viewAll="toggleView"/>
   <ul v-if="!playlist_selected" class="flex flex-col text-xs h-full overflow-y-scroll list-disc border-b border-black divide-y divide-black">
     <li v-for="(playlist, i) in collection" class="flex w-full h-auto">
       <button v-on:click.prevent="selectPlaylist(i)"
               class="flex items-center w-full px-4 py-4 hover:bg-yellow-500"
               >
-         <img class="w-4 h-full mr-4" src="~/assets/images/folder.svg" />
+         <img class="w-4 h-full mr-4" src="~/assets/images/folder.svg" v-if="!isCurrentlyPlaying(playlist)"/>
+         <img class="w-4 h-full mr-4" src="~/assets/images/volume.svg" v-if="isCurrentlyPlaying(playlist)"/>
          <span class="h-full">{{ playlist.title }}</span>
       </button>
     </li>
   </ul>
-  <player-playlist v-if="playlist_selected"
-                   v-bind:playlist_index="playlist_index"
-                   v-bind:playlist="selectedPlaylist"
-                   v-bind:index.sync="index"
-                   v-bind:collection_index.sync="playlist_index"
-                   v-bind:playing.sync="playing"
-                   @selectTrack="selectTrack"
-                   />
+  <player-explorer-playlist v-if="playlist_selected"
+                            v-bind:playlist_index="playlist_index"
+                            v-bind:playlist="selectedPlaylist"
+                            v-bind:playing="playing"
+                            v-bind:current_track="current_track"
+                            @selectTrack="selectTrack"
+                            @pauseTrack="pauseTrack"
+                            />
   </div>
 </template>
 
@@ -27,9 +28,10 @@
 export default {
   props: {
     collection: Array,
-    currentTrack: Object,
+    current_playlist: Object,
+    current_track: Object,
+    collection_index: Number,
     playing: Boolean,
-    index: Number
   },
   data: function() {
     return {
@@ -40,11 +42,14 @@ export default {
   computed: {
     selectedPlaylist() {
       return this.collection[this.playlist_index]
-    }
+    },
   },
   methods: {
-    selectTrack(index, playlist) {
-      this.$emit('selectTrack', index, playlist)
+    selectTrack(index) {
+      this.$emit('select', index, this.playlist_index)
+    },
+    pauseTrack() {
+      this.$emit('pause')
     },
     selectPlaylist(index) {
       this.playlist_index = index
@@ -52,6 +57,10 @@ export default {
     },
     toggleView() {
       this.playlist_selected = !this.playlist_selected
+    },
+    isCurrentlyPlaying(playlist) {
+      return playlist == this.current_playlist &&
+             this.playing
     }
   }
 }

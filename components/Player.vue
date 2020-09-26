@@ -76,7 +76,7 @@ module.exports = {
       this.duration = 0
       this.current_time = 0
       this.current_track.audio = new Howl({
-        src: [this.current_track.src],
+        src: this.current_track.src,
         html5: true,
         onload: () => {
           this.duration = this.current_track.audio.duration()

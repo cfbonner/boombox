@@ -6,11 +6,6 @@
           <img class="w-full h-full" src="~/assets/images/grid.svg" />
         </a>
       </li>
-      <!-- <li class="menu-item"> -->
-      <!--   <a v-on:click.prevent="viewAll"> -->
-      <!--     <img class="w-full h-full" src="~/assets/images/list.svg" v-if="" /> -->
-      <!--   </a> -->
-      <!-- </li> -->
     </ul>
   </nav>
 </template>
@@ -30,7 +25,7 @@ export default {
 
 <style>
 .menu {
-  @apply h-12 flex justify-end items-center border-b border-black;
+  @apply h-12 flex justify-end items-center border-t border-b border-black;
 }
 
 .menu-item:first-child {

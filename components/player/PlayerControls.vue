@@ -80,11 +80,13 @@ export default {
   @apply w-5 h-5
 }
 
-.control:hover {
-  @apply bg-yellow-500
+@media (hover: hover) {
+  .control:hover {
+    @apply bg-yellow-500
+  }
 }
 
 .control:active {
-  @apply bg-red-500
+  @apply bg-yellow-500
 }
 </style>

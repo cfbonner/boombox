@@ -5,7 +5,7 @@
   <ul v-if="!playlist_selected" class="flex flex-col text-xs h-full overflow-y-scroll list-disc border-b border-black divide-y divide-black">
     <li v-for="(playlist, i) in collection" class="flex w-full h-auto">
       <button v-on:click.prevent="selectPlaylist(i)"
-              class="flex items-center w-full px-4 py-4 hover:bg-yellow-500"
+              class="explorer-item"
               >
          <img class="w-4 h-full mr-4" src="~/assets/images/folder.svg" v-if="!isCurrentlyPlaying(playlist)"/>
          <img class="w-4 h-full mr-4" src="~/assets/images/volume.svg" v-if="isCurrentlyPlaying(playlist)"/>
@@ -67,7 +67,17 @@ export default {
 </script>
 
 <style>
+.explorer-item {
+  @apply flex items-center w-full px-4 py-4;
+}
+
+@media (hover: hover) {
+  .explorer-item:hover {
+    @apply bg-yellow-500;
+  }
+}
+
 img.hidden {
   @apply invisible
 }
-/style>
+</style>

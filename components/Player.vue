@@ -1,15 +1,10 @@
 <template>
   <div class="flex h-screen overflow-hidden max-h-screen flex-col">
     <div class="h-full overflow-y-scroll">
-      <player-collection v-if="!playlist_selected"
-                         v-bind:collection="collection"
-                         @selectPlaylist="selectPlaylist"
-                         />
-      <player-playlist v-if="playlist_selected"
-                       v-bind:current_time="current_time"
-                       v-bind:songs="songs"
-                       v-bind:index.sync="index"
-                       v-bind:playing.sync="playing"
+      <player-explorer v-bind:collection="collection"
+                       v-bind:index="index"
+                       v-bind:playing="playing"
+                       @selectTrack="selectTrack"
                        />
     </div>
     <div class="text-black p-4 w-full">
@@ -48,52 +43,51 @@ module.exports = {
       current_time: 0,
       title: null,
       artist: null,
-      playlist_selected: false,
-    }
-  },
-  computed: {
-    songs: function() {
-      return this.collection[this.collection_index].songs
+      current_track: null,
+      current_playlist: null
     }
   },
   created: function() {
+    this.current_playlist = this.collection[this.collection_index]
     this.initialize()
   },
   watch: {
     collection_index: function(index, last_index) {
-      this.sounds = this.collection[index]
-      this.playlist_selected = true
+      this.collection[index]
     },
-    index: function (index, last_index) {
-      if (this.sounds[last_index].playing() || this.playing) {
-        this.sounds[last_index].stop()
+    index: function (index) {
+      if (this.current_track.playing() || this.playing) {
+        this.current_track.stop()
         this.initialize()
-        this.sounds[index].play()
+        this.playing = true
+        this.current_track.play()
       } else {
         this.initialize()
       }
     },
     playing: function(playing) {
-      if (this.sounds[this.index] && playing) {
-        this.sounds[this.index].play()
+      if (this.current_track && playing) {
+        this.current_track.play()
         setInterval(() => {
-          this.current_time = !Number.isNaN(this.sounds[this.index].seek()) ? this.sounds[this.index].seek() : 0
+          this.current_time = !Number.isNaN(this.current_track.seek()) ? this.current_track.seek() : 0
         }, 1000)
-      } else if (this.sounds[this.index] && !playing) {
-        this.sounds[this.index].pause()
+      } else if (this.current_playlist.songs[this.index] && !playing) {
+        this.current_track.pause()
       }
     }
   },
   methods: {
     initialize() {
-      const track = this.songs[this.index]
-      this.title = track.title
-      this.artist = track.author
-      this.duration = null
-      this.sounds[this.index] = new Howl({
-        src: [track.src],
+      this.playing = false
+      this.current_track = this.current_playlist.songs[this.index]
+      this.title = this.current_track.title
+      this.artist = this.current_track.author
+      this.duration = 0
+      this.current_time = 0
+      this.current_track = new Howl({
+        src: [this.current_track.src],
         onload: () => {
-          this.duration = this.sounds[this.index].duration()
+          this.duration = this.current_track.duration()
         },
         onend: () => {
           this.next()
@@ -108,26 +102,18 @@ module.exports = {
     },
     previous() {
       const current = this.index
-      this.index = (current + this.songs.length - 1) % (this.songs.length)
+      this.index = (current + this.current_playlist.songs.length - 1) % (this.current_playlist.songs.length)
     },
     next() {
       const current = this.index
-      this.index = (current + 1) % (this.songs.length)
+      this.index = (current + 1) % (this.current_playlist.songs.length)
     },
-    setIndex(index) {
-      if (this.index != index) {
-        this.index = index
-      }
+    selectTrack(track, playlist) {
+      this.collection_index = playlist
+      this.index = track
+
       if (!this.playing) {
         this.playing = !this.playing
-      }
-    },
-    selectPlaylist(index) {
-      if (this.collection_index != index) {
-        this.collection_index = index
-      }
-      if (!this.playlist_selected) {
-        this.playlist_selected = !this.playlist_selected
       }
     },
   }
